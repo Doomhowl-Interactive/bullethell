@@ -1,34 +1,35 @@
 name: Build
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-            submodules: recursive
-
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.13
-        with:
-          cmake-version: "3.16.x"
-      - name: Install dependencies
-        run: |
-          sudo apt update -y
-          sudo apt install libsdl2* -y
-      - name: Configure and build
-        run: |
-            bash ./build.bash
-      - name: Test
-        run: |
-          ./build/src/bullet_game -t
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+              with:
+                  submodules: recursive
+            - name: Setup node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18
+            - name: Setup cmake
+              uses: jwlawson/actions-setup-cmake@v1.13
+              with:
+                  cmake-version: "3.16.x"
+            - name: Install dependencies
+              run: |
+                  sudo apt update -y
+                  sudo apt install libsdl2* -y
+                  npm install
+            - name: Build and test
+              run: |
+                npm run test

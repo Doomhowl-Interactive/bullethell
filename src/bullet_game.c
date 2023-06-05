@@ -31,7 +31,7 @@ DYNAMIC BASALT GameConfig ConfigureGame()
     config.company = "Doomhowl Interactive";
     config.width = WIDTH;
     config.height = HEIGHT;
-    config.language = 1;
+    config.language = 2;
     return config;
 }
 
