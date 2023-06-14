@@ -1,5 +1,6 @@
 #pragma once
-#include "basalt.h"
+#include "raylib.h"
+#include "raymath.h"
 
 #define BULLET
 
@@ -9,13 +10,12 @@
 #define MAX_BULLET_SLOTS 16
 #define MAX_PARAMETERS 16
 
-extern usize GameDifficulty;
 #define WIDTH 800
 #define HEIGHT 600
 
 #define FLAG_PLAYER (1 << 0)
 #define FLAG_BULLET (2 << 0)
-#define FLAG_ENEMY  (3 << 0)
+#define FLAG_ENEMY (3 << 0)
 
 typedef uint EntityFlag;
 typedef size_t EntityID;
@@ -80,54 +80,6 @@ typedef struct BulletSpawner {
     const BulletPattern* patternToSpawn;
 } BulletSpawner;
 
-// TODO: Use regions for sprites
-struct Entity {
-    // entity mega struct
-    Scene* scene;
-    bool isActive;
-    float timeAlive;
-    EntityID id;
-    EntityFlag flags;
-
-    // sprite
-    RectF bounds;
-    Color tint;
-    Point sourceOffset;
-    Texture texture;
-
-    float frameInterval;
-    float timer;
-    int frameID;
-
-    // physics
-    Vec2 vel;
-
-    // ship
-    float moveSpeed;
-
-    // health
-    uint maxHealth;
-    uint health;
-
-    // collision
-    bool isToucher;
-    EntityFlag ignoreFlags;
-
-    // bullet
-    BulletPattern bulletPattern;
-
-    // spawner
-    BulletSpawner bulletSpawners[MAX_SPAWNERS];
-
-    // ai
-    EntityAI ai;
-};
-
-#define MAX_ENTITY_PAGES 128
-struct Scene {
-    Entity* entities[MAX_ENTITY_PAGES];
-};
-
 // bullet_entities.c
 BULLET void ClearEntities(Scene* scene);
 BULLET Entity* CreateEntity(Scene* scene);
@@ -147,8 +99,8 @@ BULLET Entity* GetFirstEntityWithFlag(Scene* scene, EntityFlag flag);
 typedef void (*EntityCallback)(Entity* e, int i);
 BULLET usize ForeachSceneEntity(Scene* scene, EntityCallback callback);
 
-BULLET void UpdateAndRenderEntity(Scene* scene, Texture canvas, Entity* e, float delta);
-BULLET usize UpdateAndRenderScene(Scene* scene, Texture canvas, float delta);
+BULLET void UpdateAndRenderEntity(Scene* scene, Entity* e, float delta);
+BULLET usize UpdateAndRenderScene(Scene* scene, float delta);
 
 // bullet_levels.c
 #define BACKGROUND
@@ -157,7 +109,7 @@ BULLET usize UpdateAndRenderScene(Scene* scene, Texture canvas, float delta);
 #define MAX_SCHEDULED_ITEMS 256
 
 struct LevelSchedule;
-typedef void (*BackgroundRenderFunc)(Texture canvas, float delta);
+typedef void (*BackgroundRenderFunc)(float delta);
 typedef void (*LevelSchedulerFunc)(int difficulty);
 typedef void (*EntityInitializerFunc)(Entity* e, Vec2 pos);
 
@@ -187,7 +139,7 @@ typedef void (*LevelInitializerFunc)(const LevelInfo* level);
 extern const LevelInfo Level1;
 
 BULLET void SwitchLevel(const LevelInfo* level);
-BULLET bool UpdateAndRenderLevel(Texture canvas, Scene* scene, float delta);
+BULLET bool UpdateAndRenderLevel(Scene* scene, float delta);
 BULLET void RunLevelEnterHook(LevelInitializerFunc initFunc);
 
 // bullet_patterns.c
@@ -213,7 +165,7 @@ BULLET void InitTestEnemy(Entity* e, Vec2 pos);
 BULLET void InitBullet(Entity* e, const BulletPattern* pattern, Vec2 pos, Vec2 normal);
 
 // bullet_gui.c
-BULLET void UpdateAndRenderGUI(Texture canvas, Entity* player, float delta);
+BULLET void UpdateAndRenderGUI(Entity* player, float delta);
 
 // bullet_dialog.c
 BULLET void ConstructDialogs();
@@ -221,10 +173,10 @@ BULLET void ConstructDialogs();
 // bullet_editor.c
 BULLET bool IsEditorOpen();
 BULLET Rect GetEditorTabContentRegion();  // NOTE: Gets a Rectangle of the screen without the toolbar at the top
-BULLET void UpdateAndRenderEditor(Scene* activeScene, Texture canvas, float delta);
+BULLET void UpdateAndRenderEditor(Scene* activeScene, float delta);
 
 // bullet_editor_patterns.c
-BULLET void UpdateAndRenderPatternEditor(Texture canvas, float delta);
+BULLET void UpdateAndRenderPatternEditor(float delta);
 
 // bullet_tests.c
 BULLET void UnitTestBullet();
