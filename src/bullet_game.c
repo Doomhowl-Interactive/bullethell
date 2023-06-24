@@ -2,6 +2,7 @@
 #include "basalt_extra.h"
 #include "basalt_extra.hpp"
 #include "bullet_common.h"
+#include "bullet_mltest.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -51,6 +52,8 @@ DYNAMIC BASALT void InitializeGame()
     ConstructDialogs();
 
     StartDialogSequence("TUTORIAL_START");
+
+    InitBulletMLTest();
 }
 
 DYNAMIC BASALT void DisposeGame()
@@ -60,6 +63,11 @@ DYNAMIC BASALT void DisposeGame()
 
 DYNAMIC BASALT void UpdateAndRenderGame(Texture canvas, float delta)
 {
+    UpdateBulletMLTest(delta);
+    RenderBulletMLTest(canvas);
+
+    return;
+
     if (IsKeyPressed(SDLK_i)) {
         ActiveSceneID++;
         if (ActiveSceneID >= SCENE_COUNT)

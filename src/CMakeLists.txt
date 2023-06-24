@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SRC_GAME *.c *.cpp *.h *.hpp)
 
-link_libraries(basalt)
+link_libraries(basalt bulletml)
 
 if (WIN32)
     add_executable(${PROJECT_NAME} WIN32 ${SRC_GAME})
@@ -16,4 +16,4 @@ else()
     add_executable(${PROJECT_NAME} ${SRC_GAME})
 endif()
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/vendor/basalt/src)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/vendor/basalt/src bulletml)
