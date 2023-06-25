@@ -27,7 +27,8 @@ usize GameDifficulty = 2;
 DYNAMIC BASALT GameConfig ConfigureGame()
 {
     GameConfig config;
-    config.title = GetRealRandomNumber() % 1000 == 699 ? "Guardians Of Ur Mum" : "Guardians of the Holy Fire";
+    config.title = GetRealRandomNumber() % 1000 == 699 ? "Guardians Of Ur Mum"
+                                                       : "Guardians of the Holy Fire";
     config.company = "Doomhowl Interactive";
     config.width = WIDTH;
     config.height = HEIGHT;
@@ -73,6 +74,10 @@ DYNAMIC BASALT void UpdateAndRenderGame(Texture canvas, float delta)
 
     if (IsKeyPressed(SDLK_m)) {
         TakeScreenshot(canvas);
+    }
+
+    if (DialogIsSpeaking()) {
+        delta = 0.f;
     }
 
     Scene* activeScene = &Scenes[ActiveSceneID];
