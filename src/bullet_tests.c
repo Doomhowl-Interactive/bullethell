@@ -1,4 +1,5 @@
 #include "basalt.h"
+#include "bullet_lua.h"
 #include "bullet_common.h"
 
 // TODO: DRY
@@ -94,9 +95,59 @@ TEST(EntityFlags)
 }
 END;
 
+TEST(LuaSimple)
+{
+    const char* cmd = "a = 7 + 11";
+
+    lua_State* L = luaL_newstate();
+
+    int r = luaL_dostring(L, cmd);
+    int result = -1;
+
+    if (r == 0) {
+        lua_getglobal(L, "a");
+        if (lua_isnumber(L, -1)) {
+            result = lua_tonumber(L, -1);
+        }
+    } else {
+        const char* error = lua_tostring(L, -1);
+        SDL_LogError(0, "LUA: %s", error);
+    }
+
+    lua_close(L);
+
+    CHECK(r == 0, "Lua succeeding without errors");
+    CHECK(result == 18, "Lua simple math");
+}
+END;
+
+TEST(LuaSyntaxError)
+{
+    const char* cmd = "a = 7 + 11asdfsdf";
+
+    lua_State* L = luaL_newstate();
+
+    int r = luaL_dostring(L, cmd);
+    int result = -1;
+
+    if (r == 0) {
+        CHECK(false, "Lua should have failed with syntax error");
+    } else {
+        const char* error = lua_tostring(L, -1);
+        // SDL_LogError(0, "LUA: %s", error);
+    }
+
+    lua_close(L);
+
+    CHECK(r != 0, "Lua succeeding without errors");
+}
+END;
+
 BULLET void UnitTestBullet()
 {
     INFO("Doing unit tests of bulletgame");
     TestTransformations();
     TestEntityFlags();
+    TestLuaSimple();
+    TestLuaSyntaxError();
 }

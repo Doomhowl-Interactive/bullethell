@@ -38,8 +38,8 @@ DYNAMIC BASALT GameConfig ConfigureGame()
 
 DYNAMIC BASALT void InitializeGame()
 {
-    if (Config.hasUnitTesting)
-        UnitTestBullet();
+    // if (Config.hasUnitTesting) // TODO DOESN'T RUN
+    UnitTestBullet();
 
     BulletPlacholderTexture = RequestTexture("SPR_BULLET_PLACEHOLDER");
     PlayerTexture = RequestTexture("SPR_SHIP_PLAYER");
@@ -52,7 +52,6 @@ DYNAMIC BASALT void InitializeGame()
     ConstructDialogs();
 
     // StartDialogSequence("TUTORIAL_START");
-    RunLuaExample();
 }
 
 DYNAMIC BASALT void DisposeGame()

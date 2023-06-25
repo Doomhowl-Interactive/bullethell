@@ -234,9 +234,6 @@ BULLET void UpdateAndRenderPatternEditor(Texture canvas, float delta);
 // bullet_tests.c
 BULLET void UnitTestBullet();
 
-// bullet_lua.cpp
-BULLET void RunLuaExample();
-
 #ifdef __cplusplus
 }
 #endif
