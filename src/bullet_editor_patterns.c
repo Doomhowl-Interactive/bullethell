@@ -28,7 +28,7 @@ void InitPatternEditor()
     PATED.spawner->normal = (Vec2){ 0, 0.5f };
 }
 
-func void DrawScreenGrid(Texture canvas, uint cellWidth, uint cellHeight, Color color)
+static void DrawScreenGrid(Texture canvas, uint cellWidth, uint cellHeight, Color color)
 {
     for (uint y = 0; y < HEIGHT; y += cellHeight) {
         DrawLine(canvas, 0, y, WIDTH, y, color);
@@ -75,7 +75,8 @@ BULLET void UpdateAndRenderPatternEditor(Texture canvas, float delta)
     // Draw list of bullet patterns
     for (usize i = 0; i < PatternCount; i++) {
         const BulletPattern* pattern = GetBulletPattern(i);
-        const char* add = FormatText("%s%s\n", (i == PATED.patternIndex) ? "SELECTED " : "", pattern->name);
+        const char* add
+            = FormatText("%s%s\n", (i == PATED.patternIndex) ? "SELECTED " : "", pattern->name);
         infoText = (char*)AppendText(infoText, add);
     }
 

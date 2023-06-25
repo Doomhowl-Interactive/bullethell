@@ -7,7 +7,7 @@ typedef struct GUIGUI {
 } GUIGUI;
 static GUIGUI GUI = { 0 };
 
-func void UpdateAndRenderLives(Texture canvas, Entity* player, float delta)
+static void UpdateAndRenderLives(Texture canvas, Entity* player, float delta)
 {
     const int size = 64;
     const int border = 10;
@@ -29,14 +29,14 @@ func void UpdateAndRenderLives(Texture canvas, Entity* player, float delta)
     }
 }
 
-func void OnLevelEntered(const LevelInfo* info)
+static void OnLevelEntered(const LevelInfo* info)
 {
     INFO("Entered level %s (hooked function)", info->name);
     GUI.info = info;
     GUI.timePassed = 0.0f;
 }
 
-func void DrawLevelTitle(Texture canvas, float delta)
+static void DrawLevelTitle(Texture canvas, float delta)
 {
     const LevelInfo* level = GUI.info;
     if (!level) {

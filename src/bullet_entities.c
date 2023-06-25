@@ -13,7 +13,7 @@ BULLET void ClearEntities(Scene* scene)
     INFO("Cleared all entities!");
 }
 
-func void InitEntity(Entity* entity, Scene* scene)
+static void InitEntity(Entity* entity, Scene* scene)
 {
     static usize nextID = 0;
     entity->id = nextID++;
@@ -24,7 +24,7 @@ func void InitEntity(Entity* entity, Scene* scene)
 }
 
 #define ENTITIES_PER_PAGE 1024
-func void FreeEmptyPages(Scene* scene)
+static void FreeEmptyPages(Scene* scene)
 {
     for (usize i = MAX_ENTITY_PAGES - 1; i > 0; i--) {
         if (scene->entities[i] != NULL) {

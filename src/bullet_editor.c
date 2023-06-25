@@ -18,18 +18,18 @@ typedef struct EditorTab {
     EditorTabFunc function;
 } EditorTab;
 
-func void DrawMainTab(Scene* activeScene, Texture canvas, float delta);
-func void DrawAssetTab(Scene* activeScene, Texture canvas, float delta);
-func void DrawPatternsTab(Scene* activeScene, Texture canvas, float delta);
+static void DrawMainTab(Scene* activeScene, Texture canvas, float delta);
+static void DrawAssetTab(Scene* activeScene, Texture canvas, float delta);
+static void DrawPatternsTab(Scene* activeScene, Texture canvas, float delta);
 static const EditorTab EditorTabs[] = { { "Main", DrawMainTab }, { "Assets", DrawAssetTab }, { "Patterns", DrawPatternsTab }, { NULL } };
 
-func void DrawMainTab(Scene* activeScene, Texture canvas, float delta)
+static void DrawMainTab(Scene* activeScene, Texture canvas, float delta)
 {
     const char* text = FormatText("Active entities %lu", GetEntityCount());
     DrawText(canvas, text, 50, 50, YELLOW);
 }
 
-func void DrawAssetTab(Scene* activeScene, Texture canvas, float delta)
+static void DrawAssetTab(Scene* activeScene, Texture canvas, float delta)
 {
     int x = 50;
     int y = 50;
@@ -44,13 +44,13 @@ func void DrawAssetTab(Scene* activeScene, Texture canvas, float delta)
     DrawText(canvas, countText, x, y, GRAY);
 }
 
-func void DrawPatternsTab(Scene* activeScene, Texture canvas, float delta)
+static void DrawPatternsTab(Scene* activeScene, Texture canvas, float delta)
 {
     DrawText(canvas, "Bullet patterns", 50, 50, PURPLE);
     UpdateAndRenderPatternEditor(canvas, delta);
 }
 
-func void DrawEditorTabs(Scene* activeScene, Texture canvas, float delta, const EditorTab* tabs)
+static void DrawEditorTabs(Scene* activeScene, Texture canvas, float delta, const EditorTab* tabs)
 {
     if (tabWidth == 0) {
         uint tabCount = 0;

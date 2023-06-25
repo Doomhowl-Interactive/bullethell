@@ -1,7 +1,7 @@
 #include "basalt.h"
 #include "bullet_common.h"
 
-func void OnTouchedEntity(Entity* e, Entity* sender)
+static void OnTouchedEntity(Entity* e, Entity* sender)
 {
     if (EntityHasFlag(sender, FLAG_BULLET)) {
         if (EntityHasFlag(e, FLAG_PLAYER)) {
@@ -14,7 +14,7 @@ func void OnTouchedEntity(Entity* e, Entity* sender)
 }
 
 static Entity* sender;
-func void CheckCollision(Entity* listener, int i)
+static void CheckCollision(Entity* listener, int i)
 {
     if (sender->id == listener->id) {
         return;

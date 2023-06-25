@@ -15,7 +15,11 @@ extern usize GameDifficulty;
 
 #define FLAG_PLAYER (1 << 0)
 #define FLAG_BULLET (2 << 0)
-#define FLAG_ENEMY  (3 << 0)
+#define FLAG_ENEMY (3 << 0)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef uint EntityFlag;
 typedef size_t EntityID;
@@ -220,7 +224,8 @@ BULLET void ConstructDialogs();
 
 // bullet_editor.c
 BULLET bool IsEditorOpen();
-BULLET Rect GetEditorTabContentRegion();  // NOTE: Gets a Rectangle of the screen without the toolbar at the top
+BULLET Rect
+GetEditorTabContentRegion();  // NOTE: Gets a Rectangle of the screen without the toolbar at the top
 BULLET void UpdateAndRenderEditor(Scene* activeScene, Texture canvas, float delta);
 
 // bullet_editor_patterns.c
@@ -228,3 +233,10 @@ BULLET void UpdateAndRenderPatternEditor(Texture canvas, float delta);
 
 // bullet_tests.c
 BULLET void UnitTestBullet();
+
+// bullet_lua.cpp
+BULLET void RunLuaExample();
+
+#ifdef __cplusplus
+}
+#endif

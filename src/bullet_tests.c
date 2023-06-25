@@ -14,7 +14,7 @@
  EndTest(NAME, "", true); \
  }  // succeeds
 
-func void EndTest(const char* name, const char* description, bool succeeded)
+static void EndTest(const char* name, const char* description, bool succeeded)
 {
     const char* padding = PadStringRight(name, '.', 50);
     const char* result = succeeded ? "PASSED" : "FAILED";

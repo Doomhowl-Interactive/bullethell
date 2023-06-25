@@ -51,7 +51,8 @@ DYNAMIC BASALT void InitializeGame()
     SwitchLevel(&Level1);
     ConstructDialogs();
 
-    StartDialogSequence("TUTORIAL_START");
+    // StartDialogSequence("TUTORIAL_START");
+    RunLuaExample();
 }
 
 DYNAMIC BASALT void DisposeGame()

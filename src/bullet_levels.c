@@ -52,8 +52,8 @@ BULLET void RunLevelEnterHook(LevelInitializerFunc initFunc)
     (*initFunc)(LEVEL.currentLevel);
 }
 
-func void UpdateAndRenderBackground(Texture canvas, float delta);
-func void RunScheduler(LevelSchedule* schedule, Scene* scene);
+static void UpdateAndRenderBackground(Texture canvas, float delta);
+static void RunScheduler(LevelSchedule* schedule, Scene* scene);
 BULLET bool UpdateAndRenderLevel(Texture canvas, Scene* scene, float delta)
 {
     RunScheduler(&LEVEL.schedule, scene);
@@ -62,7 +62,7 @@ BULLET bool UpdateAndRenderLevel(Texture canvas, Scene* scene, float delta)
     UpdateAndRenderEditor(scene, canvas, delta);
 
     Entity* player = GetFirstEntityWithFlag(scene, FLAG_PLAYER);
-    if (player != NULL){
+    if (player != NULL) {
         UpdateAndRenderGUI(canvas, player, delta);
     }
 
@@ -70,25 +70,20 @@ BULLET bool UpdateAndRenderLevel(Texture canvas, Scene* scene, float delta)
 }
 
 // ==== API local functions ==== //
-func void UpdateAndRenderBackground(Texture canvas, float delta)
+static void UpdateAndRenderBackground(Texture canvas, float delta)
 {
-    if (Config.lowQuality)
-    {
+    if (Config.lowQuality) {
         ClearTexture(canvas, 0x0);
-    }
-    else
-    {
+    } else {
         assert(LEVEL.currentLevel);
-        if (LEVEL.currentLevel->backgroundFunc)
-        {
+        if (LEVEL.currentLevel->backgroundFunc) {
             LEVEL.currentLevel->backgroundFunc(canvas, delta);
         }
     }
-
 }
 
 // ==== Level scheduling ==== //
-func double TotalDelayUntilScheduledItem(LevelSchedule* schedule, LevelScheduleItem* item)
+static double TotalDelayUntilScheduledItem(LevelSchedule* schedule, LevelScheduleItem* item)
 {
     double totalTime = 0.0;
     for (int i = 0; i < MAX_SCHEDULED_ITEMS; i++) {
@@ -101,7 +96,7 @@ func double TotalDelayUntilScheduledItem(LevelSchedule* schedule, LevelScheduleI
     return totalTime;
 }
 
-func void RunScheduler(LevelSchedule* schedule, Scene* scene)
+static void RunScheduler(LevelSchedule* schedule, Scene* scene)
 {
     if (schedule->itemCount == schedule->curIndex) {
         return;
@@ -120,7 +115,11 @@ func void RunScheduler(LevelSchedule* schedule, Scene* scene)
     }
 }
 
-func void ScheduleEntityEx(double delay, float x, float y, EntityInitializerFunc initFunc, const char* desc)
+static void ScheduleEntityEx(double delay,
+                             float x,
+                             float y,
+                             EntityInitializerFunc initFunc,
+                             const char* desc)
 {
     LevelSchedule* schedule = &LEVEL.schedule;
     LevelScheduleItem* item = &schedule->items[schedule->itemCount++];
@@ -133,12 +132,12 @@ func void ScheduleEntityEx(double delay, float x, float y, EntityInitializerFunc
     DEBUG("Scheduled entity at %f seconds", totalDelay);
 }
 
-func inline void ScheduleEntity(double delay, float x, float y, EntityInitializerFunc initFunc)
+static inline void ScheduleEntity(double delay, float x, float y, EntityInitializerFunc initFunc)
 {
     ScheduleEntityEx(delay, x, y, initFunc, "Unnamed");
 }
 
-func void ScheduleEntityColumns(double delay, EntityInitializerFunc initFunc, uint count)
+static void ScheduleEntityColumns(double delay, EntityInitializerFunc initFunc, uint count)
 {
     int segWidth = WIDTH / count;
     for (int i = 0; i < count; i++) {
