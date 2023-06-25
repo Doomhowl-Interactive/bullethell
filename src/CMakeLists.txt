@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SRC_GAME *.c* *.h*)
 
-
 find_package(Lua REQUIRED)
 
 if (WIN32)
