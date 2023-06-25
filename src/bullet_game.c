@@ -2,6 +2,7 @@
 #include "basalt_extra.h"
 #include "basalt_extra.hpp"
 #include "bullet_common.h"
+#include "bullet_lua.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -52,6 +53,7 @@ DYNAMIC BASALT void InitializeGame()
     ConstructDialogs();
 
     // StartDialogSequence("TUTORIAL_START");
+    RunLuaFile("test.lua");
 }
 
 DYNAMIC BASALT void DisposeGame()
