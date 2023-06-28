@@ -2,12 +2,12 @@
 
 #include "basalt.h"
 #include "basalt_extra.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 void InitPlayerLevel1Weapon(Entity* e)
 {
-    double distanceFromPlayer = 45;
-    double spaceBetween = 45;
+    float distanceFromPlayer = 45;
+    float spaceBetween = 45;
 
     Vec2 offset = { -spaceBetween * 0.5f, -distanceFromPlayer };
 
@@ -44,7 +44,7 @@ void InitPlayerLevel4Weapon(Entity* e)
 
 BULLET void InitPlayer(Entity* e, Vec2 pos)
 {
-    DEBUG("Spawned player at %f %f", pos.x, pos.y);
+    SDL_LogDebug(0, "Spawned player at %f %f", pos.x, pos.y);
     e->flags = FLAG_PLAYER;
     e->texture = RequestTexture("SPR_SHIP_PLAYER");
     SetEntityCenter(e, pos.x - 48.f / 2.f, pos.y);
@@ -65,7 +65,7 @@ BULLET void InitPlayer(Entity* e, Vec2 pos)
 
 BULLET void InitTestEnemy(Entity* e, Vec2 pos)
 {
-    DEBUG("Spawned enemy at %f %f", pos.x, pos.y);
+    SDL_LogDebug(0, "Spawned enemy at %f %f", pos.x, pos.y);
     e->texture = RequestTexture("SPR_SHIP_PLAYER");
     SetEntityCenter(e, pos.x - 48.f / 2.f, pos.y);
     e->tint = RED;
@@ -83,7 +83,7 @@ BULLET void InitTestEnemy(Entity* e, Vec2 pos)
     // Bullet spawner
     BulletSpawner* spawner = &e->bulletSpawners[0];
     spawner->interval = 0.5f;
-    spawner->normal= Vec2Normalize(e->vel);
+    spawner->normal = Vec2Normalize(e->vel);
     spawner->offset = Vec2Scale(spawner->normal, 50);
     spawner->patternToSpawn = GetBulletPatternByName("SimpleForwards");
 }

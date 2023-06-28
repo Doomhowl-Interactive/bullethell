@@ -1,6 +1,6 @@
 #include "basalt.h"
 #include "basalt_extra.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +10,7 @@ BULLET void ClearEntities(Scene* scene)
     assert(scene);
 
     memset(scene->entities, 0, sizeof(Entity) * MAX_ENTITIES);
-    INFO("Cleared all entities!");
+    SDL_LogInfo(0, "Cleared all entities!");
 }
 
 static void InitEntity(Entity* entity, Scene* scene)
@@ -38,7 +38,7 @@ static void FreeEmptyPages(Scene* scene)
             if (isEmpty) {
                 free(scene->entities[i]);
                 scene->entities[i] = NULL;
-                DEBUG("Freed entity page");
+                SDL_LogDebug(0, "Freed entity page");
             } else {
                 break;
             }
@@ -46,6 +46,7 @@ static void FreeEmptyPages(Scene* scene)
     }
 }
 
+// TODO: Deprecate and use unordered_map
 BULLET Entity* CreateEntity(Scene* scene)
 {
     assert(scene);
@@ -59,9 +60,9 @@ BULLET Entity* CreateEntity(Scene* scene)
     for (usize i = 0; i < MAX_ENTITY_PAGES; i++) {
         // Allocate the page if it doesn't exist
         if (scene->entities[i] == NULL) {
-            scene->entities[i] = calloc(ENTITIES_PER_PAGE, sizeof(Entity));
+            scene->entities[i] = (Entity*)calloc(ENTITIES_PER_PAGE, sizeof(Entity));
             assert(scene->entities[i]);
-            DEBUG("Allocated new entity page");
+            SDL_LogDebug(0, "Allocated new entity page");
         }
 
         // Find first available slot in this page
@@ -75,7 +76,7 @@ BULLET Entity* CreateEntity(Scene* scene)
             }
         }
     }
-    ERR("Ran out of pages to store entities in.");
+    SDL_LogError(0, "Ran out of pages to store entities in.");
     assert(0);
 }
 
@@ -149,7 +150,14 @@ BULLET void UpdateAndRenderEntity(Scene* scene, Texture canvas, Entity* e, float
 
     if (e->texture.width > 0) {
         if (e->texture.pixels) {
-            DrawTextureEx(canvas, e->texture, V2(e->bounds), 0, 0, e->bounds.width, e->bounds.height, e->tint);
+            DrawTextureEx(canvas,
+                          e->texture,
+                          V2(e->bounds),
+                          0,
+                          0,
+                          e->bounds.width,
+                          e->bounds.height,
+                          e->tint);
         } else {
             DrawRectangle(canvas, R2(e->bounds), e->tint);
         }

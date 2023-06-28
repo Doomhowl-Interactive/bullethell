@@ -1,7 +1,7 @@
 #include <math.h>
 
 #include "basalt.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 #define PATTERN
 #define ENDING
@@ -62,7 +62,8 @@ PATTERN void MoveBulletOceanWave(Entity* e, ActionData* data, const int* args)
     float distance = data->timer * power;
 
     float centerX = (data->origin.x + data->normal.x * distance) + cos(data->timer * 10) * segWidth;
-    float centerY = (data->origin.y + data->normal.y * distance) + sin(data->timer * 10) * segHeight;
+    float centerY
+        = (data->origin.y + data->normal.y * distance) + sin(data->timer * 10) * segHeight;
     SetEntityCenter(e, centerX, centerY);
 }
 
@@ -77,7 +78,8 @@ PATTERN void MoveBulletSowing(Entity* e, ActionData* data, const int* args)
 
     float distance = data->timer * power;
 
-    float centerX = (data->origin.x + data->normal.x * distance) + cos(data->timer * speed) * segWidth;
+    float centerX
+        = (data->origin.x + data->normal.x * distance) + cos(data->timer * speed) * segWidth;
     float centerY = (data->origin.y + data->normal.y * distance);
     SetEntityCenter(e, centerX, centerY);
 }
@@ -94,7 +96,8 @@ PATTERN void MoveBulletStaircase(Entity* e, ActionData* data, const int* args)
     float distance = data->timer * power;
     Vec2 center = GetEntityCenter(e);
     float centerX = center.x = (data->origin.x + data->normal.x * distance);
-    float centerY = center.y = (data->origin.y + data->normal.y * distance) + cos(data->timer * speed) * segWidth;
+    float centerY = center.y
+        = (data->origin.y + data->normal.y * distance) + cos(data->timer * speed) * segWidth;
     SetEntityCenter(e, centerX, centerY);
 }
 
@@ -156,124 +159,112 @@ BULLET bool RunBulletPattern(Entity* e, float delta)
 }
 
 const BulletPattern BulletPatterns[]
-=
-{
-    {
-        "SimpleForwards",
-        {
-            {
-                MoveBulletStraight,
-                EndBulletOOB,
-                0xFF0000FF,
-                { 1 }
-            }
-        }
+    = { { "SimpleForwards", { { MoveBulletStraight, EndBulletOOB, 0xFF0000FF, { 1 } } }
 
-    },
-    {
-        "Stresstest",
-        {
-            {
-                MoveBulletStraight,
-                EndBulletTimer,
-                0xFFAFFFFF,
-                { 1 },
-            },
-            {
-                SplitBulletCircle,
-                EndBulletInstantly,
-                0xFFAAAAFF,
-                { 300 },
-            },
-            {
-                MoveBulletStraight,
-                EndBulletOOB,
-                0xFFAFFFFF,
-                { 10 },
-            },
-        }
-    },
-
-    {
-        "Firework",
-        {
-            {
-                MoveBulletStraight,
-                EndBulletTimer,
-                0xFFAAAAFF,
-                { 1 },
-            },
-            {
-                SplitBulletCircle,
-                EndBulletInstantly,
-                0xFFAAAAFF,
-                { 30 },
-            },
-            {
-                MoveBulletStraight,
-                EndBulletOOB,
-                0xFF0000FF,
-                { 10 },
-            },
-        }
-    },
-    {
-        "Firework-Double",
-        {
-            {
-                MoveBulletStraight,
-                EndBulletTimer,
-                0xFFAAAAFF,
-                { 1 },
-            },
-            {
-                SplitBulletCircle,
-                EndBulletInstantly,
-                0xAAFFAAFF,
-                { 3 },
-            },
-            {
-                MoveBulletStraight,
-                EndBulletTimer,
-                0xFF0000FF,
-                { 1 },
-            },
-            {
-                SplitBulletCircle,
-                EndBulletInstantly,
-                0x00FFAAFF,
-                { 2 },
-            },
-            {
-                MoveBulletStraight,
-                EndBulletOOB,
-                0x0000FFFF,
-                { 10 },
-            },
-        }
-    },
-    {
-        "PlayerBullet1",
-        {
-            {
-                MoveBulletStraight,
-                EndBulletOOB,
-                0xFFBB00FF,
-                { 5 },
-            },
         },
-        "SPR_BULLET_PLACEHOLDER",
-    },
-    {
-        "PlayerBullet2",
-        { { MoveBulletOceanWave, EndBulletOOB, 0xAAAAFFFF, { 40, 40 } } },
-        "SPR_BULLET_PLACEHOLDER",
-    },
-    { "PlayerBullet3", { { MoveBulletStaircase, EndBulletOOB, 0x0022DDFF, { 10, -1 } } }, "SPR_BULLET_PLACEHOLDER" },
-    { "PlayerBullet4", { { MoveBulletSnake, EndBulletOOB, 0x22FF22FF, { 10, -1 } } }, "SPR_BULLET_PLACEHOLDER" },
-    { "SnakeBulletsDownwards", { { MoveBulletSnake, EndBulletOOB, 0x22FF22FF, { 10, 1 } } }, "SPR_BULLET_PLACEHOLDER" },
-    { NULL }
-};
+        { "Stresstest",
+          {
+              {
+                  MoveBulletStraight,
+                  EndBulletTimer,
+                  0xFFAFFFFF,
+                  { 1 },
+              },
+              {
+                  SplitBulletCircle,
+                  EndBulletInstantly,
+                  0xFFAAAAFF,
+                  { 300 },
+              },
+              {
+                  MoveBulletStraight,
+                  EndBulletOOB,
+                  0xFFAFFFFF,
+                  { 10 },
+              },
+          } },
+
+        { "Firework",
+          {
+              {
+                  MoveBulletStraight,
+                  EndBulletTimer,
+                  0xFFAAAAFF,
+                  { 1 },
+              },
+              {
+                  SplitBulletCircle,
+                  EndBulletInstantly,
+                  0xFFAAAAFF,
+                  { 30 },
+              },
+              {
+                  MoveBulletStraight,
+                  EndBulletOOB,
+                  0xFF0000FF,
+                  { 10 },
+              },
+          } },
+        { "Firework-Double",
+          {
+              {
+                  MoveBulletStraight,
+                  EndBulletTimer,
+                  0xFFAAAAFF,
+                  { 1 },
+              },
+              {
+                  SplitBulletCircle,
+                  EndBulletInstantly,
+                  0xAAFFAAFF,
+                  { 3 },
+              },
+              {
+                  MoveBulletStraight,
+                  EndBulletTimer,
+                  0xFF0000FF,
+                  { 1 },
+              },
+              {
+                  SplitBulletCircle,
+                  EndBulletInstantly,
+                  0x00FFAAFF,
+                  { 2 },
+              },
+              {
+                  MoveBulletStraight,
+                  EndBulletOOB,
+                  0x0000FFFF,
+                  { 10 },
+              },
+          } },
+        {
+            "PlayerBullet1",
+            {
+                {
+                    MoveBulletStraight,
+                    EndBulletOOB,
+                    0xFFBB00FF,
+                    { 5 },
+                },
+            },
+            "SPR_BULLET_PLACEHOLDER",
+        },
+        {
+            "PlayerBullet2",
+            { { MoveBulletOceanWave, EndBulletOOB, 0xAAAAFFFF, { 40, 40 } } },
+            "SPR_BULLET_PLACEHOLDER",
+        },
+        { "PlayerBullet3",
+          { { MoveBulletStaircase, EndBulletOOB, 0x0022DDFF, { 10, -1 } } },
+          "SPR_BULLET_PLACEHOLDER" },
+        { "PlayerBullet4",
+          { { MoveBulletSnake, EndBulletOOB, 0x22FF22FF, { 10, -1 } } },
+          "SPR_BULLET_PLACEHOLDER" },
+        { "SnakeBulletsDownwards",
+          { { MoveBulletSnake, EndBulletOOB, 0x22FF22FF, { 10, 1 } } },
+          "SPR_BULLET_PLACEHOLDER" },
+        { NULL } };
 
 BULLET const BulletPattern* GetBulletPattern(usize index)
 {
@@ -281,7 +272,7 @@ BULLET const BulletPattern* GetBulletPattern(usize index)
     if (index < count)
         return &BulletPatterns[index];
 
-    WARN("Did not find bullet pattern indexed %lu", index);
+    SDL_LogWarn(0, "Did not find bullet pattern indexed %lu", index);
     return &BulletPatterns[0];
 }
 
@@ -292,7 +283,8 @@ BULLET const BulletPattern* GetBulletPatternByName(const char* name)
             return pat;
         }
     }
-    WARN("Did not find bullet pattern with name %s", name);
+
+    SDL_LogWarn(0, "Did not find bullet pattern with name %s", name);
     return GetBulletPattern(0);
 }
 

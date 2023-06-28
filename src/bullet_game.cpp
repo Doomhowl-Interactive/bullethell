@@ -1,8 +1,9 @@
 #include "basalt.h"
 #include "basalt_extra.h"
 #include "basalt_extra.hpp"
-#include "bullet_common.h"
-#include "bullet_lua.h"
+
+#include "bullet_common.hpp"
+#include "bullet_lua.hpp"
 
 #include <math.h>
 #include <stdio.h>
@@ -58,7 +59,7 @@ DYNAMIC BASALT void InitializeGame()
 
 DYNAMIC BASALT void DisposeGame()
 {
-    WARN("TODO: dispose game properly");
+    SDL_LogWarn(0, "TODO: dispose game properly");
 }
 
 DYNAMIC BASALT void UpdateAndRenderGame(Texture canvas, float delta)

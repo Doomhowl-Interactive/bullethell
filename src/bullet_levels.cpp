@@ -1,5 +1,5 @@
 #include "basalt.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 #define MAX_INITIALIZERS 64
 
 typedef struct LevelLEVEL {
@@ -21,7 +21,7 @@ BULLET void SwitchLevel(const LevelInfo* level)
     level->schedulerFunc(GameDifficulty);
     LEVEL.currentLevel = level;
 
-    INFO("Switched to level %s", level->name);
+    SDL_LogInfo(0, "Switched to level %s", level->name);
 
     // Call subscribers
     for (usize i = 0; i < LEVEL.initializerCount; i++) {
@@ -45,7 +45,7 @@ BULLET void RunLevelEnterHook(LevelInitializerFunc initFunc)
     if (LEVEL.initializerCount < MAX_INITIALIZERS) {
         LEVEL.initializers[LEVEL.initializerCount++] = initFunc;
     } else {
-        ERR("Too many level initializers defined!");
+        SDL_LogError(0, "Too many level initializers defined!");
     }
 
     // send level immediately
@@ -129,7 +129,7 @@ static void ScheduleEntityEx(double delay,
     item->description = desc;
 
     double totalDelay = TotalDelayUntilScheduledItem(schedule, item);
-    DEBUG("Scheduled entity at %f seconds", totalDelay);
+    SDL_LogDebug(0, "Scheduled entity at %f seconds", totalDelay);
 }
 
 static inline void ScheduleEntity(double delay, float x, float y, EntityInitializerFunc initFunc)
@@ -142,7 +142,7 @@ static void ScheduleEntityColumns(double delay, EntityInitializerFunc initFunc, 
     int segWidth = WIDTH / count;
     for (int i = 0; i < count; i++) {
         int x = i * segWidth;
-        Vec2 spawnPos = { x, -100 };
+        Vec2 spawnPos = { (float)x, -100 };
         ScheduleEntity(delay, V2(spawnPos), initFunc);
     }
 }

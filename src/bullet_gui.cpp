@@ -1,5 +1,5 @@
 #include "basalt.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 typedef struct GUIGUI {
     const LevelInfo* info;
@@ -31,7 +31,7 @@ static void UpdateAndRenderLives(Texture canvas, Entity* player, float delta)
 
 static void OnLevelEntered(const LevelInfo* info)
 {
-    INFO("Entered level %s (hooked function)", info->name);
+    SDL_LogInfo(0, "Entered level %s (hooked function)", info->name);
     GUI.info = info;
     GUI.timePassed = 0.0f;
 }

@@ -1,5 +1,5 @@
 #include "basalt.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 static void OnTouchedEntity(Entity* e, Entity* sender)
 {

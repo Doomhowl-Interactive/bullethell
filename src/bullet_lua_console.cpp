@@ -1,4 +1,4 @@
-#include "bullet_lua_console.h"
+#include "bullet_lua_console.hpp"
 #include "basalt.h"
 
 BULLET void UpdateAndRenderLuaConsole(Texture canvas, float delta)

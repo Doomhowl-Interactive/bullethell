@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "basalt.h"
 #include "basalt_extra.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 const Color tabBGColor = 0x111111FF;
 const Color tabFGColor = 0xAAAAAAFF;
@@ -21,7 +21,10 @@ typedef struct EditorTab {
 static void DrawMainTab(Scene* activeScene, Texture canvas, float delta);
 static void DrawAssetTab(Scene* activeScene, Texture canvas, float delta);
 static void DrawPatternsTab(Scene* activeScene, Texture canvas, float delta);
-static const EditorTab EditorTabs[] = { { "Main", DrawMainTab }, { "Assets", DrawAssetTab }, { "Patterns", DrawPatternsTab }, { NULL } };
+static const EditorTab EditorTabs[] = { { "Main", DrawMainTab },
+                                        { "Assets", DrawAssetTab },
+                                        { "Patterns", DrawPatternsTab },
+                                        { NULL } };
 
 static void DrawMainTab(Scene* activeScene, Texture canvas, float delta)
 {
@@ -93,7 +96,7 @@ BULLET void UpdateAndRenderEditor(Scene* activeScene, Texture canvas, float delt
 {
     if (IsKeyPressed(SDLK_y)) {
         IsOpened = !IsOpened;
-        INFO("%s editor", IsOpened ? "Opened" : "Closed");
+        SDL_LogInfo(0, "%s editor", IsOpened ? "Opened" : "Closed");
     }
 
     if (!IsOpened) {

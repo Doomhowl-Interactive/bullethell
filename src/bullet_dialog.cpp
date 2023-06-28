@@ -1,4 +1,4 @@
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 #define DIAL_TUTORIAL_START
 

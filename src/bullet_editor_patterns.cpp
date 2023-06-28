@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "basalt.h"
 #include "basalt_extra.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 typedef struct PatternEditor {
     Entity* spawnerEntity;

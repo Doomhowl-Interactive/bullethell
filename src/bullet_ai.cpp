@@ -1,6 +1,6 @@
 #include "basalt.h"
 #include "basalt_extra.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
 
 #define AI
 
@@ -119,7 +119,7 @@ AI bool BehavePlayer(Entity* e, ActionData* data, const int* args)
 
     // shoot if pressing Z
     for (usize i = 0; i < MAX_SPAWNERS; i++) {
-         e->bulletSpawners[i].disabled = !IsKeyDown(SDLK_z);
+        e->bulletSpawners[i].disabled = !IsKeyDown(SDLK_z);
     }
 
     // switch between bullet types for testing
@@ -140,9 +140,10 @@ AI bool BehavePlayer(Entity* e, ActionData* data, const int* args)
 }
 
 // clang-format doesn't expand this shit
-const EntityAI EntityAIBehaviours[] = { { "PlayerMovement", { { FlyTowards, { 400, 530, 400, 670 } }, { BehavePlayer } } },
-                                        { "SidewaysEight", { { FlyTowards, { 150, 80 } }, { SidewaysEight, { 0 } } } },
-                                        NULL };
+const EntityAI EntityAIBehaviours[]
+    = { { "PlayerMovement", { { FlyTowards, { 400, 530, 400, 670 } }, { BehavePlayer } } },
+        { "SidewaysEight", { { FlyTowards, { 150, 80 } }, { SidewaysEight, { 0 } } } },
+        NULL };
 
 BULLET const EntityAI* GetEntityAI(usize index)
 {
@@ -151,7 +152,7 @@ BULLET const EntityAI* GetEntityAI(usize index)
         return &EntityAIBehaviours[index];
     }
 
-    WARN("Did not find bullet pattern indexed %lu", index);
+    SDL_LogWarn(0, "Did not find bullet pattern indexed %lu", index);
     return &EntityAIBehaviours[0];
 }
 
@@ -162,7 +163,8 @@ BULLET const EntityAI* GetEntityAIByName(const char* name)
             return beh;
         }
     }
-    WARN("Did not find bullet pattern with name %s", name);
+
+    SDL_LogWarn(0, "Did not find bullet pattern with name %s", name);
     return GetEntityAI(0);
 }
 

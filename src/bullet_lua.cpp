@@ -5,7 +5,7 @@
 #include <iostream>
 #include <SDL_log.h>
 
-#include "bullet_lua.h"
+#include "bullet_lua.hpp"
 #include "lua.h"
 
 namespace fs = std::filesystem;

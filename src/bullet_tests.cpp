@@ -1,6 +1,6 @@
 #include "basalt.h"
-#include "bullet_lua.h"
-#include "bullet_common.h"
+#include "bullet_common.hpp"
+#include "bullet_lua.hpp"
 
 // TODO: DRY
 // =====================================
@@ -23,8 +23,8 @@ static void EndTest(const char* name, const char* description, bool succeeded)
     BasaltPrintColored(color, "TEST  : %s %s", padding, result);
 
     if (!succeeded) {
-        ERR("Failed at --> %s", description);
-        ERR("Cannot proceed as unit tests failed!");
+        SDL_LogError(0, "Failed at --> %s", description);
+        SDL_LogError(0, "Cannot proceed as unit tests failed!");
         exit(EXIT_FAILURE);
     }
 }
@@ -145,7 +145,7 @@ END;
 
 BULLET void UnitTestBullet()
 {
-    INFO("Doing unit tests of bulletgame");
+    SDL_LogInfo(0, "Doing unit tests of bulletgame");
     TestTransformations();
     TestEntityFlags();
     TestLuaSimple();
