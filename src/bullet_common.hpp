@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+#include <unordered_map>
+
 #include "basalt.h"
 #include "basalt_extra.h"
 #include "basalt_extra.hpp"
@@ -18,10 +21,6 @@ extern usize GameDifficulty;
 #define FLAG_PLAYER (1 << 0)
 #define FLAG_BULLET (2 << 0)
 #define FLAG_ENEMY (3 << 0)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 typedef uint EntityFlag;
 typedef size_t EntityID;
@@ -129,9 +128,9 @@ struct Entity {
     EntityAI ai;
 };
 
-#define MAX_ENTITY_PAGES 128
 struct Scene {
-    Entity* entities[MAX_ENTITY_PAGES];
+    std::string name;
+    std::unordered_map<EntityID, Entity> entities;
 };
 
 // bullet_entities.c
@@ -205,7 +204,7 @@ BULLET void FillInActionData(ActionData* data, float delta);
 BULLET extern void ResetActionData(ActionData* data);
 
 // bullet_collision.c
-BULLET void CheckCollisionOfEntity(Entity* e, Scene* scene);
+BULLET void CheckCollisionOfEntity(Entity* sender, Scene* scene);
 
 // bullet_ai.c
 BULLET bool RunEntityAI(Entity* e, float delta);
@@ -235,7 +234,3 @@ BULLET void UpdateAndRenderPatternEditor(Texture canvas, float delta);
 
 // bullet_tests.c
 BULLET void UnitTestBullet();
-
-#ifdef __cplusplus
-}
-#endif

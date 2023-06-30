@@ -5,14 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+using namespace std;
+
 BULLET void ClearEntities(Scene* scene)
 {
     assert(scene);
-
-    memset(scene->entities, 0, sizeof(Entity) * MAX_ENTITIES);
+    scene->entities.clear();
     SDL_LogInfo(0, "Cleared all entities!");
 }
 
+// TODO: constructor
 static void InitEntity(Entity* entity, Scene* scene)
 {
     static usize nextID = 0;
@@ -23,61 +25,15 @@ static void InitEntity(Entity* entity, Scene* scene)
     entity->tint = WHITE;
 }
 
-#define ENTITIES_PER_PAGE 1024
-static void FreeEmptyPages(Scene* scene)
-{
-    for (usize i = MAX_ENTITY_PAGES - 1; i > 0; i--) {
-        if (scene->entities[i] != NULL) {
-            bool isEmpty = true;
-            for (usize j = 0; j < ENTITIES_PER_PAGE; j++) {
-                if (scene->entities[i][j].isActive) {
-                    isEmpty = false;
-                    break;
-                }
-            }
-            if (isEmpty) {
-                free(scene->entities[i]);
-                scene->entities[i] = NULL;
-                SDL_LogDebug(0, "Freed entity page");
-            } else {
-                break;
-            }
-        }
-    }
-}
-
 // TODO: Deprecate and use unordered_map
 BULLET Entity* CreateEntity(Scene* scene)
 {
     assert(scene);
 
-    static double prevFreeTime = 0;
-    if (GetTimeElapsed() > prevFreeTime + 10) {
-        FreeEmptyPages(scene);
-        prevFreeTime = GetTimeElapsed();
-    }
-
-    for (usize i = 0; i < MAX_ENTITY_PAGES; i++) {
-        // Allocate the page if it doesn't exist
-        if (scene->entities[i] == NULL) {
-            scene->entities[i] = (Entity*)calloc(ENTITIES_PER_PAGE, sizeof(Entity));
-            assert(scene->entities[i]);
-            SDL_LogDebug(0, "Allocated new entity page");
-        }
-
-        // Find first available slot in this page
-        for (usize j = 0; j < ENTITIES_PER_PAGE; j++) {
-            assert(scene->entities[i]);
-            Entity* entity = &scene->entities[i][j];
-            assert(entity);
-            if (!entity->isActive) {
-                InitEntity(entity, scene);
-                return entity;
-            }
-        }
-    }
-    SDL_LogError(0, "Ran out of pages to store entities in.");
-    assert(0);
+    Entity entity = {};
+    InitEntity(&entity, scene);
+    scene->entities.insert({ entity.id, entity });
+    return &scene->entities[entity.id];
 }
 
 BULLET void DestroyEntity(Entity* e)
@@ -109,29 +65,6 @@ BULLET void ResetEntityVelocity(Entity* e)
 {
     e->vel.x = 0;
     e->vel.y = 0;
-}
-
-BULLET usize ForeachSceneEntity(Scene* scene, EntityCallback callback)
-{
-    usize index = 0;
-    for (usize i = 0; i < MAX_ENTITY_PAGES; i++) {
-        if (scene->entities[i] != NULL) {
-            for (usize j = 0; j < ENTITIES_PER_PAGE; j++) {
-                assert(scene->entities[i]);
-                Entity* e = &scene->entities[i][j];
-                assert(e);
-                if (e->isActive) {
-                    (*callback)(e, index);
-                    index++;
-                }
-            }
-        } else {
-            break;
-        }
-    }
-
-    // return count
-    return index;
 }
 
 BULLET void UpdateAndRenderEntity(Scene* scene, Texture canvas, Entity* e, float delta)
@@ -231,16 +164,9 @@ BULLET bool EntityHasFlag(Entity* e, EntityFlag flag)
 
 BULLET Entity* GetFirstEntityWithFlag(Scene* scene, EntityFlag flag)
 {
-    for (usize i = 0; i < MAX_ENTITY_PAGES; i++) {
-        if (scene->entities[i] == NULL) {
-            break;
-        }
-        for (usize j = 0; j < ENTITIES_PER_PAGE; j++) {
-            assert(scene->entities[i]);
-            Entity* e = &scene->entities[i][j];
-            if (EntityHasFlag(e, flag) && EntityIsActive(e)) {
-                return e;
-            }
+    for (auto& [id, e] : scene->entities) {
+        if (EntityHasFlag(&e, flag) && EntityIsActive(&e)) {
+            return &e;
         }
     }
     return NULL;
@@ -249,18 +175,10 @@ BULLET Entity* GetFirstEntityWithFlag(Scene* scene, EntityFlag flag)
 BULLET usize UpdateAndRenderScene(Scene* scene, Texture canvas, float delta)
 {
     usize count = 0;
-    for (usize i = 0; i < MAX_ENTITY_PAGES; i++) {
-        if (scene->entities[i] == NULL) {
-            break;
-        }
-        for (usize j = 0; j < ENTITIES_PER_PAGE; j++) {
-            assert(scene->entities[i]);
-            Entity* e = &scene->entities[i][j];
-            assert(e);
-            if (e->isActive) {
-                UpdateAndRenderEntity(scene, canvas, e, delta);
-                count++;
-            }
+    for (auto& [id, e] : scene->entities) {
+        if (e.isActive) {
+            UpdateAndRenderEntity(scene, canvas, &e, delta);
+            count++;
         }
     }
     LastCount = count;

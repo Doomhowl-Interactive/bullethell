@@ -5,6 +5,7 @@
 #include "bullet_common.hpp"
 
 #include <math.h>
+#include <vector>
 #include <stdio.h>
 
 #define SKY_COLOR 0x000000FF
@@ -12,13 +13,15 @@
 #define SCENE_BULLET_PREVIEW 1
 #define SCENE_COUNT 2
 
+using namespace std;
+
 static uint ActiveSceneID = 0;
-static Scene Scenes[SCENE_COUNT] = { 0 };
+static vector<Scene> Scenes;
 
 static uint SelectedPattern = 1;
 
 #define TEST_ENEMY_COUNT 10
-static Entity* TestEnemies[TEST_ENEMY_COUNT];
+static vector<EntityID> TestEnemies;
 
 Texture BulletPlacholderTexture = { 0 };
 Texture PlayerTexture = { 0 };
@@ -45,7 +48,12 @@ DYNAMIC BASALT void InitializeGame()
     BulletPlacholderTexture = RequestTexture("SPR_BULLET_PLACEHOLDER");
     PlayerTexture = RequestTexture("SPR_SHIP_PLAYER");
 
-    Entity* player = CreateEntity(&Scenes[SCENE_GAME]);
+    // create games scene
+    Scenes.emplace({});
+    Scene& gameScene = Scenes[Scenes.size() - 1];
+    gameScene.name = "Game";
+
+    Entity* player = CreateEntity(&gameScene);
     Vec2 spawnPos = { WIDTH / 2.0f, HEIGHT / 1.2f };
     InitPlayer(player, spawnPos);
 

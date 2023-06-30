@@ -3,11 +3,13 @@
 #include "basalt_extra.h"
 #include "bullet_common.hpp"
 
+// TODO: rewrite as object
+
 typedef struct PatternEditor {
     Entity* spawnerEntity;
     BulletSpawner* spawner;
     Texture buffer;
-    Scene scene;
+    Scene* scene;
     usize patternIndex;
 } PatternEditor;
 static PatternEditor PATED = { 0 };
@@ -20,7 +22,7 @@ void InitPatternEditor()
     PATED.buffer = InitTexture(WIDTH, HEIGHT);
 
     // Spawn bullet spawner in the center of the scene
-    PATED.spawnerEntity = CreateEntity(&PATED.scene);
+    PATED.spawnerEntity = CreateEntity(PATED.scene);
     SetEntityCenter(PATED.spawnerEntity, WIDTH * 0.5f, HEIGHT * 0.5f);
     PATED.spawner = &PATED.spawnerEntity->bulletSpawners[0];
     PATED.spawner->patternToSpawn = GetBulletPattern(0);
@@ -63,7 +65,7 @@ BULLET void UpdateAndRenderPatternEditor(Texture canvas, float delta)
     const uint gridSize = 32;
     DrawScreenGrid(PATED.buffer, gridSize, gridSize, 0x999999FF);
 
-    UpdateAndRenderScene(&PATED.scene, PATED.buffer, delta);
+    UpdateAndRenderScene(PATED.scene, PATED.buffer, delta);
 
     // Draw info
     Rect contentRegion = GetEditorTabContentRegion();

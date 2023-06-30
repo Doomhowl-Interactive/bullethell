@@ -13,28 +13,22 @@ static void OnTouchedEntity(Entity* e, Entity* sender)
     }
 }
 
-static Entity* sender;
-static void CheckCollision(Entity* listener, int i)
+BULLET void CheckCollisionOfEntity(Entity* sender, Scene* scene)
 {
-    if (sender->id == listener->id) {
+    if (!sender->isToucher) {
         return;
     }
 
-    if (EntityHasFlag(listener, sender->ignoreFlags)) {
-        return;
-    }
+    for (auto& [id, listener] : scene->entities) {
+        if (!listener.isActive || sender->id == listener.id) {
+            continue;
+        }
 
-    if (RectFOverlaps(sender->bounds, listener->bounds)) {
-        OnTouchedEntity(listener, sender);
+        if (EntityHasFlag(&listener, sender->ignoreFlags)) {
+            return;
+        }
+        if (RectFOverlaps(sender->bounds, listener.bounds)) {
+            OnTouchedEntity(&listener, sender);
+        }
     }
-}
-
-BULLET void CheckCollisionOfEntity(Entity* e, Scene* scene)
-{
-    if (!e->isToucher) {
-        return;
-    }
-
-    sender = e;
-    ForeachSceneEntity(scene, CheckCollision);
 }

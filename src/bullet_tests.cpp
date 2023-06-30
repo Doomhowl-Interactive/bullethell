@@ -77,7 +77,7 @@ END;
 
 TEST(EntityFlags)
 {
-    Scene scene = { 0 };
+    Scene scene = {};
 
     Entity* e = CreateEntity(&scene);
     InitPlayer(e, (Vec2){ 10, 10 });
