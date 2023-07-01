@@ -1,17 +1,20 @@
 #include "basalt.h"
 #include "bullet_common.hpp"
-#define MAX_INITIALIZERS 64
+#include "bullet_functional.hpp"
 
-typedef struct LevelLEVEL {
+#include <string>
+#include <unordered_map>
+
+using namespace std;
+
+struct LevelLEVEL {
     double timePassed;
     LevelSchedule schedule;
-
     const LevelInfo* currentLevel;
+    FunctionMap<LevelInitializerFunc, const LevelInfo*> initializers;
+};
 
-    LevelInitializerFunc initializers[MAX_INITIALIZERS];
-    usize initializerCount;
-} LevelLEVEL;
-
+// TODO: make object
 static LevelLEVEL LEVEL = { 0 };
 
 // ==== API functions ==== //
@@ -24,32 +27,13 @@ BULLET void SwitchLevel(const LevelInfo* level)
     SDL_LogInfo(0, "Switched to level %s", level->name);
 
     // Call subscribers
-    for (usize i = 0; i < LEVEL.initializerCount; i++) {
-        LevelInitializerFunc initFunc = LEVEL.initializers[i];
-        if (initFunc) {
-            (*initFunc)(level);
-        }
-    }
+    auto amount = LEVEL.initializers.dispatch(level);
 }
 
-BULLET void RunLevelEnterHook(LevelInitializerFunc initFunc)
+BULLET void RunOnLevelEntered(LevelInitializerFunc initFunc)
 {
-    // check if present
-    for (usize i = 0; i < LEVEL.initializerCount; i++) {
-        if (LEVEL.initializers[i] == initFunc) {
-            return;  // already added
-        }
-    }
-
     // make subscriber
-    if (LEVEL.initializerCount < MAX_INITIALIZERS) {
-        LEVEL.initializers[LEVEL.initializerCount++] = initFunc;
-    } else {
-        SDL_LogError(0, "Too many level initializers defined!");
-    }
-
-    // send level immediately
-    (*initFunc)(LEVEL.currentLevel);
+    LEVEL.initializers.subscribeAndRun("main", initFunc, LEVEL.currentLevel);
 }
 
 static void UpdateAndRenderBackground(Texture canvas, float delta);

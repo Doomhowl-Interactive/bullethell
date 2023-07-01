@@ -30,7 +30,7 @@ static void UpdateAndRenderLives(Texture canvas, Entity* player, float delta)
     }
 }
 
-static void OnLevelEntered(const LevelInfo* info)
+static void EnteredLevel(const LevelInfo* info)
 {
     SDL_LogInfo(0, "Entered level %s (hooked function)", info->name);
     GUI.info = info;
@@ -55,7 +55,7 @@ BULLET void UpdateAndRenderGUI(Texture canvas, Entity* player, float delta)
     UpdateAndRenderLives(canvas, player, delta);
 
     // hooks
-    RunLevelEnterHook(OnLevelEntered);
+    RunOnLevelEntered(EnteredLevel);
 
     GUI.timePassed += delta;
 }

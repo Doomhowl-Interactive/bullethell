@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <functional>
 
 #include "basalt.h"
 #include "basalt_extra.h"
@@ -41,49 +42,48 @@ struct ActionData {
     float floats[MAX_BULLET_SLOTS];
 };
 
-typedef void (*BulletActionFunc)(Entity* entity, ActionData* data, const int* args);
-typedef bool (*BulletActionEndFunc)(Entity* entity, ActionData* data, const int* args);
+typedef std::function<void(Entity* entity, ActionData* data, const int* args)> BulletActionFunc;
+typedef std::function<bool(Entity* entity, ActionData* data, const int* args)> BulletActionEndFunc;
 
-typedef struct BulletAction {
+struct BulletAction {
     BulletActionFunc function;
     BulletActionEndFunc endFunction;
     Color tint;
     int parameters[MAX_PARAMETERS];
-} BulletAction;
+};
 
-typedef bool (*EntityAIActionFunc)(Entity* entity, ActionData* data, const int* args);
+typedef std::function<bool(Entity* entity, ActionData* data, const int* args)> EntityAIActionFunc;
 
-typedef struct EntityAIAction {
+struct EntityAIAction {
     EntityAIActionFunc function;
     int parameters[MAX_PARAMETERS];
-} EntityAIAction;
+};
 
-typedef struct EntityAI {
+struct EntityAI {
     const char* name;
     EntityAIAction actions[MAX_ACTIONS];
     ActionData data;
     usize count;
     usize index;
-} EntityAI;
+};
 
-typedef struct BulletPattern {
+struct BulletPattern {
     const char* name;
     BulletAction actions[MAX_ACTIONS];
     const char* texture;
     ActionData data;
     uint count;
     uint index;
+};
 
-} BulletPattern;
-
-typedef struct BulletSpawner {
+struct BulletSpawner {
     Vec2 offset;
     Vec2 normal;
     float interval;
     float spawnTimer;
     bool disabled;
     const BulletPattern* patternToSpawn;
-} BulletSpawner;
+};
 
 // TODO: Use regions for sprites
 struct Entity {
@@ -165,7 +165,7 @@ BULLET bool EntityIsActive(Entity* e);
 BULLET bool EntityHasFlag(Entity* e, EntityFlag flag);
 BULLET Entity* GetFirstEntityWithFlag(Scene* scene, EntityFlag flag);
 
-typedef void (*EntityCallback)(Entity* e, int i);
+typedef std::function<void(Entity* e, int i)> EntityCallback;
 BULLET usize ForeachSceneEntity(Scene* scene, EntityCallback callback);
 
 BULLET void UpdateAndRenderEntity(Scene* scene, Texture canvas, Entity* e, float delta);
@@ -175,26 +175,27 @@ BULLET usize UpdateAndRenderScene(Scene* scene, Texture canvas, float delta);
 #define BACKGROUND
 #define SCHEDULE
 
+// TODO: vectorize
 #define MAX_SCHEDULED_ITEMS 256
 
 struct LevelSchedule;
-typedef void (*BackgroundRenderFunc)(Texture canvas, float delta);
-typedef void (*LevelSchedulerFunc)(int difficulty);
-typedef void (*EntityInitializerFunc)(Entity* e, Vec2 pos);
+typedef std::function<void(int difficulty)> LevelSchedulerFunc;
+typedef std::function<void(Texture canvas, float delta)> BackgroundRenderFunc;
+typedef std::function<void(Entity* e, Vec2 pos)> EntityInitializerFunc;
 
-typedef struct LevelScheduleItem {
+struct LevelScheduleItem {
     double delayTime;
     EntityInitializerFunc initFunc;
     Vec2 position;
     const char* description;
-} LevelScheduleItem;
+};
 
-typedef struct LevelSchedule {
+struct LevelSchedule {
     LevelScheduleItem items[MAX_SCHEDULED_ITEMS];
     usize curIndex;
     usize itemCount;
     double lastScheduleTime;
-} LevelSchedule;
+};
 
 typedef struct LevelInfo {
     int number;
@@ -203,13 +204,13 @@ typedef struct LevelInfo {
     BackgroundRenderFunc backgroundFunc;
 } LevelInfo;
 
-typedef void (*LevelInitializerFunc)(const LevelInfo* level);
+typedef std::function<void(const LevelInfo* level)> LevelInitializerFunc;
 
 extern const LevelInfo Level1;
 
 BULLET void SwitchLevel(const LevelInfo* level);
 BULLET bool UpdateAndRenderLevel(Texture canvas, Scene* scene, float delta);
-BULLET void RunLevelEnterHook(LevelInitializerFunc initFunc);
+BULLET void RunOnLevelEntered(LevelInitializerFunc initFunc);
 
 // bullet_patterns.c
 BULLET bool RunBulletPattern(Entity* e, float delta);

@@ -148,10 +148,10 @@ BULLET bool RunBulletPattern(Entity* e, float delta)
 
     // process bullet action
     BulletActionFunc actionFunc = action.function;
-    (*actionFunc)(e, &pattern.data, action.parameters);
+    actionFunc(e, &pattern.data, action.parameters);
 
     BulletActionEndFunc endFunc = action.endFunction;
-    if ((*endFunc)(e, &pattern.data, action.parameters)) {
+    if (endFunc(e, &pattern.data, action.parameters)) {
         // on bullet action done
         pattern.index++;
         ResetActionData(&pattern.data);
