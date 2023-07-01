@@ -11,6 +11,7 @@ static int tabHeight = 20;
 static bool IsOpened = false;
 static uint SelectedTabIndex = 0;
 
+// TODO: use std::function
 typedef void (*EditorTabFunc)(Scene* activeScene, Texture canvas, float delta);
 
 typedef struct EditorTab {

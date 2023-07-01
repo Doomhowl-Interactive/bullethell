@@ -36,7 +36,7 @@ PATTERN void SplitBulletCircle(Entity* e, ActionData* data, const int* args)
 
         // Copy pattern from parent, but skip current action.
         Entity* ent = CreateEntity(e->scene);
-        BulletPattern pattern = e->bulletPattern;
+        BulletPattern& pattern = e->bullet.pattern;
         pattern.index++;
         Vec2 spawnPos = GetEntityCenter(e);
         InitBullet(ent, &pattern, spawnPos, normal);
@@ -112,10 +112,11 @@ PATTERN void MoveBulletSnake(Entity* e, ActionData* data, const int* args)
 }
 
 // core system
-uint GetBulletPatternActionCount(BulletPattern* pattern)
+// TODO: vectorize
+uint GetBulletPatternActionCount(BulletPattern& pattern)
 {
     for (uint index = 0; index < MAX_ACTIONS; index++) {
-        if (pattern->actions[index].function == NULL)
+        if (pattern.actions[index].function == NULL)
             return index;
     }
     return MAX_ACTIONS;
@@ -123,37 +124,37 @@ uint GetBulletPatternActionCount(BulletPattern* pattern)
 
 BULLET bool RunBulletPattern(Entity* e, float delta)
 {
-    BulletPattern* pattern = &e->bulletPattern;
-    FillInActionData(&pattern->data, delta);
+    BulletPattern& pattern = e->bullet.pattern;
+    FillInActionData(&pattern.data, delta);
 
-    if (pattern->name == NULL)
+    if (pattern.name == NULL)
         return false;
 
-    if (pattern->count == 0) {
-        pattern->count = GetBulletPatternActionCount(pattern);
-        if (pattern->count == 0) {
-            pattern->name = NULL;
+    if (pattern.count == 0) {
+        pattern.count = GetBulletPatternActionCount(pattern);
+        if (pattern.count == 0) {
+            pattern.name = NULL;
             return false;
         }
     }
 
-    if (pattern->index >= pattern->count) {
+    if (pattern.index >= pattern.count) {
         return true;
     }
 
-    BulletAction action = pattern->actions[pattern->index];
+    BulletAction action = pattern.actions[pattern.index];
     assert(action.function);
     e->tint = action.tint;
 
     // process bullet action
     BulletActionFunc actionFunc = action.function;
-    (*actionFunc)(e, &pattern->data, action.parameters);
+    (*actionFunc)(e, &pattern.data, action.parameters);
 
     BulletActionEndFunc endFunc = action.endFunction;
-    if ((*endFunc)(e, &pattern->data, action.parameters)) {
+    if ((*endFunc)(e, &pattern.data, action.parameters)) {
         // on bullet action done
-        pattern->index++;
-        ResetActionData(&pattern->data);
+        pattern.index++;
+        ResetActionData(&pattern.data);
     }
     return false;
 }

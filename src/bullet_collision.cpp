@@ -15,7 +15,8 @@ static void OnTouchedEntity(Entity* e, Entity* sender)
 
 BULLET void CheckCollisionOfEntity(Entity* sender, Scene* scene)
 {
-    if (!sender->isToucher) {
+    auto& col = sender->collision;
+    if (!col.toucher) {
         return;
     }
 
@@ -24,7 +25,7 @@ BULLET void CheckCollisionOfEntity(Entity* sender, Scene* scene)
             continue;
         }
 
-        if (EntityHasFlag(&listener, sender->ignoreFlags)) {
+        if (EntityHasFlag(&listener, col.ignoreFlags)) {
             return;
         }
         if (RectFOverlaps(sender->bounds, listener.bounds)) {

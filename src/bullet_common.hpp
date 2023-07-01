@@ -29,7 +29,7 @@ typedef struct Entity Entity;
 typedef struct Scene Scene;
 
 // Some generic RAM to put data in
-typedef struct ActionData {
+struct ActionData {
     float timer;
     Vec2 origin;
     Vec2 normal;
@@ -39,7 +39,7 @@ typedef struct ActionData {
     int ints[MAX_BULLET_SLOTS];
     bool bools[MAX_BULLET_SLOTS];
     float floats[MAX_BULLET_SLOTS];
-} ActionData;
+};
 
 typedef void (*BulletActionFunc)(Entity* entity, ActionData* data, const int* args);
 typedef bool (*BulletActionEndFunc)(Entity* entity, ActionData* data, const int* args);
@@ -89,49 +89,65 @@ typedef struct BulletSpawner {
 struct Entity {
     // entity mega struct
     Scene* scene;
-    bool isActive;
-    float timeAlive;
     EntityID id;
     EntityFlag flags;
 
-    // sprite
-    RectF bounds;
-    Color tint;
-    Point sourceOffset;
-    Texture texture;
+    bool isActive = true;
+    float timeAlive = 0.f;
 
-    float frameInterval;
-    float timer;
-    int frameID;
-
-    // physics
     Vec2 vel;
+    RectF bounds;
+    Color tint = WHITE;
 
-    // ship
-    float moveSpeed;
+    struct {
+        Point sourceOffset;
+        Texture texture;
+        int frameIndex;
+        float frameInterval = 0.2f;
+        float timer;
+    } sprite;
 
-    // health
-    uint maxHealth;
-    uint health;
+    struct {
+        float moveSpeed;
+    } ship;
 
-    // collision
-    bool isToucher;
-    EntityFlag ignoreFlags;
+    struct {
+        uint max;
+        uint value;
 
-    // bullet
-    BulletPattern bulletPattern;
+        inline void set(uint value)
+        {
+            this->max = value;
+            this->value = value;
+        };
 
-    // spawner
-    BulletSpawner bulletSpawners[MAX_SPAWNERS];
+    } health;
 
-    // ai
-    EntityAI ai;
+    struct {
+        bool toucher;
+        EntityFlag ignoreFlags;
+    } collision;
+
+    struct {
+        BulletPattern pattern;
+    } bullet;
+
+    struct {
+        BulletSpawner spawners[MAX_SPAWNERS];
+    } spawner;
+
+    struct {
+        EntityAI behaviour;
+    } ai;
 };
 
 struct Scene {
     std::string name;
     std::unordered_map<EntityID, Entity> entities;
 };
+
+// bullet_game.cpp
+BULLET Scene* GetActiveScene();
 
 // bullet_entities.c
 BULLET void ClearEntities(Scene* scene);

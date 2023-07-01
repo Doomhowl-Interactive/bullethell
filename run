@@ -1,0 +1,7 @@
+#!/bin/bash
+set -xe
+
+cmake -S . -B build
+cmake --build build -j${nproc}
+gdb -ex run ./build/src/bullet_game
+

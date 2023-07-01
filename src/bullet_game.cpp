@@ -4,6 +4,7 @@
 
 #include "bullet_common.hpp"
 
+#include <deque>
 #include <math.h>
 #include <vector>
 #include <stdio.h>
@@ -15,13 +16,12 @@
 
 using namespace std;
 
-static uint ActiveSceneID = 0;
-static vector<Scene> Scenes;
-
 static uint SelectedPattern = 1;
 
 #define TEST_ENEMY_COUNT 10
 static vector<EntityID> TestEnemies;
+
+static deque<Scene> Scenes;
 
 Texture BulletPlacholderTexture = { 0 };
 Texture PlayerTexture = { 0 };
@@ -48,12 +48,10 @@ DYNAMIC BASALT void InitializeGame()
     BulletPlacholderTexture = RequestTexture("SPR_BULLET_PLACEHOLDER");
     PlayerTexture = RequestTexture("SPR_SHIP_PLAYER");
 
-    // create games scene
-    Scenes.emplace({});
-    Scene& gameScene = Scenes[Scenes.size() - 1];
-    gameScene.name = "Game";
+    // Create game scene
+    Scenes.push_front({ "Game", {} });
 
-    Entity* player = CreateEntity(&gameScene);
+    Entity* player = CreateEntity(&Scenes.front());
     Vec2 spawnPos = { WIDTH / 2.0f, HEIGHT / 1.2f };
     InitPlayer(player, spawnPos);
 
@@ -71,14 +69,14 @@ DYNAMIC BASALT void DisposeGame()
 DYNAMIC BASALT void UpdateAndRenderGame(Texture canvas, float delta)
 {
     if (IsKeyPressed(SDLK_i)) {
-        ActiveSceneID++;
-        if (ActiveSceneID >= SCENE_COUNT)
-            ActiveSceneID = 0;
+        auto front = Scenes.front();
+        Scenes.pop_front();
+        Scenes.push_back(front);
     }
     if (IsKeyPressed(SDLK_u)) {
-        ActiveSceneID--;
-        if (ActiveSceneID < 0)
-            ActiveSceneID = SCENE_COUNT - 1;
+        auto back = Scenes.back();
+        Scenes.pop_back();
+        Scenes.push_front(back);
     }
 
     if (IsKeyPressed(SDLK_m)) {
@@ -89,7 +87,7 @@ DYNAMIC BASALT void UpdateAndRenderGame(Texture canvas, float delta)
         delta = 0.f;
     }
 
-    Scene* activeScene = &Scenes[ActiveSceneID];
+    Scene* activeScene = GetActiveScene();
     UpdateAndRenderLevel(canvas, activeScene, delta);
 
     Entity* player = GetFirstEntityWithFlag(activeScene, FLAG_PLAYER);
@@ -100,4 +98,9 @@ DYNAMIC BASALT void UpdateAndRenderGame(Texture canvas, float delta)
     float fps = 1.f / delta;
     const char* infoText = FormatText("FPS %1.3f", fps);
     DrawText(canvas, infoText, 10, HEIGHT - 20, fps < 30 ? RED : GREEN);
+}
+
+Scene* GetActiveScene()
+{
+    return &Scenes.front();
 }

@@ -4,12 +4,11 @@
 
 #define AI
 
-// TODO Implement player movement using the AI system
-
-usize GetEntityAIActionCount(const EntityAI* behaviour)
+// TODO: put in vector
+usize GetEntityAIActionCount(const EntityAI& behaviour)
 {
     for (uint index = 0; index < MAX_ACTIONS; index++) {
-        if (behaviour->actions[index].function == NULL)
+        if (behaviour.actions[index].function == NULL)
             return index;
     }
     return MAX_ACTIONS;
@@ -17,27 +16,27 @@ usize GetEntityAIActionCount(const EntityAI* behaviour)
 
 BULLET bool RunEntityAI(Entity* e, float delta)
 {
-    EntityAI* ai = &e->ai;
-    FillInActionData(&ai->data, delta);
+    EntityAI& ai = e->ai.behaviour;
+    FillInActionData(&ai.data, delta);
 
-    if (ai->name == NULL) {
+    if (ai.name == NULL) {
         return false;  // Entity has no AI, don't do anything.
     }
 
-    if (ai->count == 0) {
-        ai->count = GetEntityAIActionCount(ai);
+    if (ai.count == 0) {
+        ai.count = GetEntityAIActionCount(ai);
     }
 
-    if (ai->index >= ai->count) {
+    if (ai.index >= ai.count) {
         return true;  // Finished all steps of the AI
     }
 
-    EntityAIAction action = ai->actions[ai->index];
+    EntityAIAction& action = ai.actions[ai.index];
     EntityAIActionFunc actionFunc = action.function;
     assert(actionFunc);
-    if (actionFunc(e, &ai->data, action.parameters)) {
-        ai->index++;
-        ResetActionData(&ai->data);
+    if (actionFunc(e, &ai.data, action.parameters)) {
+        ai.index++;
+        ResetActionData(&ai.data);
     }
     return false;
 }
@@ -89,7 +88,7 @@ AI bool FlyTowards(Entity* e, ActionData* data, const int* args)
     return false;
 }
 
-AI bool SidewaysEight(const Entity* e, const ActionData* data, const int* args)
+AI bool SidewaysEight(Entity* e, ActionData* data, const int* args)
 {
     // TODO:
     return false;
@@ -99,7 +98,7 @@ AI bool BehavePlayer(Entity* e, ActionData* data, const int* args)
 {
     int* patternIndex = &data->ints[0];
 
-    float moveSpeed = e->moveSpeed;
+    float moveSpeed = e->ship.moveSpeed;
     e->vel.x = 0;
     e->vel.y = 0;
 
@@ -119,20 +118,20 @@ AI bool BehavePlayer(Entity* e, ActionData* data, const int* args)
 
     // shoot if pressing Z
     for (usize i = 0; i < MAX_SPAWNERS; i++) {
-        e->bulletSpawners[i].disabled = !IsKeyDown(SDLK_z);
+        e->spawner.spawners[i].disabled = !IsKeyDown(SDLK_z);
     }
 
     // switch between bullet types for testing
     if (IsKeyPressed(SDLK_e)) {
         (*patternIndex)++;
-        if (*patternIndex >= GetBulletPatternCount())
+        if (*patternIndex >= (int)GetBulletPatternCount())
             *patternIndex = 0;
 
         for (int i = 0; i < MAX_SPAWNERS; i++) {
-            BulletSpawner* spawner = &e->bulletSpawners[i];
-            if (spawner == NULL)
+            BulletSpawner& spawner = e->spawner.spawners[i];
+            if (spawner.patternToSpawn == NULL)
                 continue;
-            spawner->patternToSpawn = GetBulletPattern(*patternIndex);
+            spawner.patternToSpawn = GetBulletPattern(*patternIndex);
         }
     }
 
@@ -156,6 +155,7 @@ BULLET const EntityAI* GetEntityAI(usize index)
     return &EntityAIBehaviours[0];
 }
 
+// TODO: use unordered_map
 BULLET const EntityAI* GetEntityAIByName(const char* name)
 {
     for (const EntityAI* beh = EntityAIBehaviours; beh->name != NULL; beh++) {

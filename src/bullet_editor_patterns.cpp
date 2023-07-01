@@ -9,8 +9,10 @@ typedef struct PatternEditor {
     Entity* spawnerEntity;
     BulletSpawner* spawner;
     Texture buffer;
-    Scene* scene;
     usize patternIndex;
+
+    // embedded scene, no pointer here
+    Scene scene;
 } PatternEditor;
 static PatternEditor PATED = { 0 };
 
@@ -18,13 +20,16 @@ void InitPatternEditor()
 {
     assert(GetBulletPatternCount() > 0);
 
+    // use own embedded scene to simulate bullet patterns
+    PATED.scene = { "PatternEditor", {} };
+
     // Allocate new canvas
     PATED.buffer = InitTexture(WIDTH, HEIGHT);
 
     // Spawn bullet spawner in the center of the scene
-    PATED.spawnerEntity = CreateEntity(PATED.scene);
+    PATED.spawnerEntity = CreateEntity(&PATED.scene);
     SetEntityCenter(PATED.spawnerEntity, WIDTH * 0.5f, HEIGHT * 0.5f);
-    PATED.spawner = &PATED.spawnerEntity->bulletSpawners[0];
+    PATED.spawner = &PATED.spawnerEntity->spawner.spawners[0];
     PATED.spawner->patternToSpawn = GetBulletPattern(0);
     PATED.spawner->interval = 2.f;
     PATED.spawner->normal = (Vec2){ 0, 0.5f };
@@ -65,7 +70,7 @@ BULLET void UpdateAndRenderPatternEditor(Texture canvas, float delta)
     const uint gridSize = 32;
     DrawScreenGrid(PATED.buffer, gridSize, gridSize, 0x999999FF);
 
-    UpdateAndRenderScene(PATED.scene, PATED.buffer, delta);
+    UpdateAndRenderScene(&PATED.scene, PATED.buffer, delta);
 
     // Draw info
     Rect contentRegion = GetEditorTabContentRegion();

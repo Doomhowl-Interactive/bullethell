@@ -20,9 +20,6 @@ static void InitEntity(Entity* entity, Scene* scene)
     static usize nextID = 0;
     entity->id = nextID++;
     entity->scene = scene;
-    entity->isActive = true;
-    entity->frameInterval = 0.2f;
-    entity->tint = WHITE;
 }
 
 // TODO: Deprecate and use unordered_map
@@ -52,6 +49,7 @@ BULLET Vec2 GetEntityCenter(Entity* e)
     return RectFCenter(e->bounds);
 }
 
+// TODO: When size is zero automatically use texture size
 BULLET void SetEntitySize(Entity* e, uint width, uint height)
 {
     Vec2 center = GetEntityCenter(e);
@@ -74,17 +72,18 @@ BULLET void UpdateAndRenderEntity(Scene* scene, Texture canvas, Entity* e, float
     // Shortcuts
     Vec2 const* vel = &e->vel;
 
-    // Entity drawing
-    if (e->timer > e->frameInterval) {
-        e->timer = 0.f;
-        e->frameID++;
+    // Sprite drawing
+    auto& sprite = e->sprite;
+    if (sprite.timer > sprite.frameInterval) {
+        sprite.timer = 0.f;
+        sprite.frameIndex++;
     }
-    e->timer += delta;
+    sprite.timer += delta;
 
-    if (e->texture.width > 0) {
-        if (e->texture.pixels) {
+    if (sprite.texture.width > 0) {
+        if (sprite.texture.pixels) {
             DrawTextureEx(canvas,
-                          e->texture,
+                          sprite.texture,
                           V2(e->bounds),
                           0,
                           0,
@@ -98,24 +97,24 @@ BULLET void UpdateAndRenderEntity(Scene* scene, Texture canvas, Entity* e, float
 
     Vec2 center = RectFCenter(e->bounds);
 
-    // WEAPON BEHAVIOUR
+    // Spawner behaviour
     for (uint i = 0; i < MAX_SPAWNERS; i++) {
-        BulletSpawner* weapon = &e->bulletSpawners[i];
-        if (weapon->patternToSpawn == NULL || weapon->disabled)
+        BulletSpawner& weapon = e->spawner.spawners[i];
+        if (weapon.patternToSpawn == NULL || weapon.disabled)
             continue;
 
         // draw normal (debugging)
-        Vec2 weaponCenter = Vec2Add(center, weapon->offset);
-        Vec2 end = Vec2Add(weaponCenter, Vec2Scale(weapon->normal, 10.f));
+        Vec2 weaponCenter = Vec2Add(center, weapon.offset);
+        Vec2 end = Vec2Add(weaponCenter, Vec2Scale(weapon.normal, 10.f));
         DrawLine(canvas, V2(weaponCenter), V2(end), 0x0000AAFF);
 
         // spawn bullets on interval
-        if (weapon->interval > 0.f && weapon->spawnTimer > weapon->interval) {
+        if (weapon.interval > 0.f && weapon.spawnTimer > weapon.interval) {
             Entity* bul = CreateEntity(scene);
-            InitBullet(bul, weapon->patternToSpawn, weaponCenter, weapon->normal);
-            weapon->spawnTimer = 0.f;
+            InitBullet(bul, weapon.patternToSpawn, weaponCenter, weapon.normal);
+            weapon.spawnTimer = 0.f;
         }
-        weapon->spawnTimer += delta;
+        weapon.spawnTimer += delta;
     }
 
     // Bullet behaviour
@@ -142,8 +141,9 @@ BULLET usize GetEntityCount()
 
 BULLET void EntityDamage(Entity* e)
 {
-    if (e->health > 0) {
-        e->health--;
+    auto& health = e->health;
+    if (health.value > 0) {
+        health.value--;
     } else {
         DestroyEntity(e);
     }
