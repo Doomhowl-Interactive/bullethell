@@ -11,7 +11,7 @@ BULLET void ClearEntities(Scene* scene)
 {
     assert(scene);
     scene->entities.clear();
-    SDL_LogInfo(0, "Cleared all entities!");
+    INFO("Cleared all entities!");
 }
 
 // TODO: constructor

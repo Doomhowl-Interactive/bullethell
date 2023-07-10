@@ -95,9 +95,9 @@ static void DrawEditorTabs(Scene* activeScene, Texture canvas, float delta, cons
 
 BULLET void UpdateAndRenderEditor(Scene* activeScene, Texture canvas, float delta)
 {
-    if (IsKeyPressed(SDLK_y)) {
+    if (IsKeyPressed(KEY_y)) {
         IsOpened = !IsOpened;
-        SDL_LogInfo(0, "%s editor", IsOpened ? "Opened" : "Closed");
+        INFO("%s editor", IsOpened ? "Opened" : "Closed");
     }
 
     if (!IsOpened) {
@@ -109,7 +109,7 @@ BULLET void UpdateAndRenderEditor(Scene* activeScene, Texture canvas, float delt
 
 BULLET Rect GetEditorTabContentRegion()
 {
-    return (Rect){ 0, tabHeight, WIDTH, HEIGHT - tabHeight };
+    return { 0, tabHeight, WIDTH, HEIGHT - tabHeight };
 }
 
 BULLET bool IsEditorOpen()

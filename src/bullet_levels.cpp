@@ -24,7 +24,7 @@ BULLET void SwitchLevel(const LevelInfo* level)
     level->schedulerFunc(GameDifficulty);
     LEVEL.currentLevel = level;
 
-    SDL_LogInfo(0, "Switched to level %s", level->name);
+    INFO("Switched to level %s", level->name);
 
     // Call subscribers
     auto amount = LEVEL.initializers.dispatch(level);
@@ -109,11 +109,11 @@ static void ScheduleEntityEx(double delay,
     LevelScheduleItem* item = &schedule->items[schedule->itemCount++];
     item->delayTime = delay;
     item->initFunc = initFunc;
-    item->position = (Vec2){ x, y };
+    item->position = { x, y };
     item->description = desc;
 
     double totalDelay = TotalDelayUntilScheduledItem(schedule, item);
-    SDL_LogDebug(0, "Scheduled entity at %f seconds", totalDelay);
+    DEBUG("Scheduled entity at %f seconds", totalDelay);
 }
 
 static inline void ScheduleEntity(double delay, float x, float y, EntityInitializerFunc initFunc)

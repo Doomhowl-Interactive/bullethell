@@ -32,7 +32,7 @@ void InitPatternEditor()
     PATED.spawner = &PATED.spawnerEntity->spawner.spawners[0];
     PATED.spawner->patternToSpawn = GetBulletPattern(0);
     PATED.spawner->interval = 2.f;
-    PATED.spawner->normal = (Vec2){ 0, 0.5f };
+    PATED.spawner->normal = { 0, 0.5f };
 }
 
 static void DrawScreenGrid(Texture canvas, uint cellWidth, uint cellHeight, Color color)
@@ -87,10 +87,10 @@ BULLET void UpdateAndRenderPatternEditor(Texture canvas, float delta)
         infoText = (char*)AppendText(infoText, add);
     }
 
-    if (IsKeyPressed(SDLK_j)) {
+    if (IsKeyPressed(KEY_j)) {
         PATED.patternIndex++;
     }
-    if (IsKeyPressed(SDLK_k)) {
+    if (IsKeyPressed(KEY_k)) {
         PATED.patternIndex--;
     }
     PATED.patternIndex %= PatternCount;

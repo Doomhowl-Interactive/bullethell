@@ -32,7 +32,7 @@ static void UpdateAndRenderLives(Texture canvas, Entity* player, float delta)
 
 static void EnteredLevel(const LevelInfo* info)
 {
-    SDL_LogInfo(0, "Entered level %s (hooked function)", info->name);
+    INFO("Entered level %s (hooked function)", info->name);
     GUI.info = info;
     GUI.timePassed = 0.0f;
 }

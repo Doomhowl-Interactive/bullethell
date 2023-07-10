@@ -63,23 +63,23 @@ DYNAMIC BASALT void InitializeGame()
 
 DYNAMIC BASALT void DisposeGame()
 {
-    SDL_LogWarn(0, "TODO: dispose game properly");
+    WARN(0, "TODO: dispose game properly");
 }
 
 DYNAMIC BASALT void UpdateAndRenderGame(Texture canvas, float delta)
 {
-    if (IsKeyPressed(SDLK_i)) {
+    if (IsKeyPressed(KEY_i)) {
         auto front = Scenes.front();
         Scenes.pop_front();
         Scenes.push_back(front);
     }
-    if (IsKeyPressed(SDLK_u)) {
+    if (IsKeyPressed(KEY_u)) {
         auto back = Scenes.back();
         Scenes.pop_back();
         Scenes.push_front(back);
     }
 
-    if (IsKeyPressed(SDLK_m)) {
+    if (IsKeyPressed(KEY_m)) {
         TakeScreenshot(canvas);
     }
 

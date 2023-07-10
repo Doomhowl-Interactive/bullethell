@@ -273,7 +273,7 @@ BULLET const BulletPattern* GetBulletPattern(usize index)
     if (index < count)
         return &BulletPatterns[index];
 
-    SDL_LogWarn(0, "Did not find bullet pattern indexed %lu", index);
+    WARN(0, "Did not find bullet pattern indexed %lu", index);
     return &BulletPatterns[0];
 }
 
@@ -285,7 +285,7 @@ BULLET const BulletPattern* GetBulletPatternByName(const char* name)
         }
     }
 
-    SDL_LogWarn(0, "Did not find bullet pattern with name %s", name);
+    WARN("Did not find bullet pattern with name %s", name);
     return GetBulletPattern(0);
 }
 

@@ -44,7 +44,7 @@ void InitPlayerLevel4Weapon(Entity* e)
 
 BULLET void InitPlayer(Entity* e, Vec2 pos)
 {
-    SDL_LogDebug(0, "Spawned player at %f %f", pos.x, pos.y);
+    DEBUG("Spawned player at %f %f", pos.x, pos.y);
     e->tint = WHITE;
     e->flags = FLAG_PLAYER;
     e->sprite.texture = RequestTexture("SPR_SHIP_PLAYER");
@@ -66,7 +66,7 @@ BULLET void InitPlayer(Entity* e, Vec2 pos)
 
 BULLET void InitTestEnemy(Entity* e, Vec2 pos)
 {
-    SDL_LogDebug(0, "Spawned enemy at %f %f", pos.x, pos.y);
+    DEBUG("Spawned enemy at %f %f", pos.x, pos.y);
     e->sprite.texture = RequestTexture("SPR_SHIP_PLAYER");
     SetEntityCenter(e, pos.x - 48.f / 2.f, pos.y);
     e->tint = RED;

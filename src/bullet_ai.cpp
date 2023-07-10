@@ -2,6 +2,12 @@
 #include "basalt_extra.h"
 #include "bullet_common.hpp"
 
+#ifdef WIN32
+# include <SDL_log.h>
+#else
+# include <SDL2/SDL_log.h>
+#endif
+
 #define AI
 
 // TODO: put in vector
@@ -103,26 +109,26 @@ AI bool BehavePlayer(Entity* e, ActionData* data, const int* args)
     e->vel.y = 0;
 
     // TODO: Use arrow keys instead to rip Touhou keyboard layout
-    if (IsKeyDown(SDLK_LEFT)) {
+    if (IsKeyDown(KEY_LEFT)) {
         e->vel.x -= moveSpeed;
     }
-    if (IsKeyDown(SDLK_RIGHT)) {
+    if (IsKeyDown(KEY_RIGHT)) {
         e->vel.x += moveSpeed;
     }
-    if (IsKeyDown(SDLK_UP)) {
+    if (IsKeyDown(KEY_UP)) {
         e->vel.y -= moveSpeed;
     }
-    if (IsKeyDown(SDLK_DOWN)) {
+    if (IsKeyDown(KEY_DOWN)) {
         e->vel.y += moveSpeed;
     }
 
     // shoot if pressing Z
     for (usize i = 0; i < MAX_SPAWNERS; i++) {
-        e->spawner.spawners[i].disabled = !IsKeyDown(SDLK_z);
+        e->spawner.spawners[i].disabled = !IsKeyDown(KEY_z);
     }
 
     // switch between bullet types for testing
-    if (IsKeyPressed(SDLK_e)) {
+    if (IsKeyPressed(KEY_e)) {
         (*patternIndex)++;
         if (*patternIndex >= (int)GetBulletPatternCount())
             *patternIndex = 0;

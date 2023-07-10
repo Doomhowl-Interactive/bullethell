@@ -5,7 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SRC_GAME *.c* *.h*)
 
-add_compile_options(-Wall -Wextra -Wpedantic -fpermissive)
+if (LINUX)
+    add_compile_options(-Wall -Wextra -Wpedantic -fpermissive)
+endif()
 
 if (WIN32)
     add_executable(${PROJECT_NAME} WIN32 ${SRC_GAME})
@@ -15,5 +17,5 @@ else()
     add_executable(${PROJECT_NAME} ${SRC_GAME})
 endif()
 
-target_link_libraries(${PROJECT_NAME} ${LUA_LIBRARIES} basalt)
+target_link_libraries(${PROJECT_NAME} basalt)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/vendor/basalt/src)

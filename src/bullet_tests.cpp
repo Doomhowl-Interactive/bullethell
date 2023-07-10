@@ -22,8 +22,8 @@ static void EndTest(const char* name, const char* description, bool succeeded)
     BasaltPrintColored(color, "TEST  : %s %s", padding, result);
 
     if (!succeeded) {
-        SDL_LogError(0, "Failed at --> %s", description);
-        SDL_LogError(0, "Cannot proceed as unit tests failed!");
+        ERR("Failed at --> %s", description);
+        ERR("Cannot proceed as unit tests failed!");
         exit(EXIT_FAILURE);
     }
 }
@@ -80,10 +80,10 @@ TEST(EntityFlags)
     Scene scene = {};
 
     Entity* e = CreateEntity(&scene);
-    InitPlayer(e, (Vec2){ 10, 10 });
+    InitPlayer(e, { 10, 10 });
 
     Entity* e2 = CreateEntity(&scene);
-    InitBullet(e2, GetBulletPattern(0), (Vec2){ 10, 10 }, (Vec2){ 0, 0 });
+    InitBullet(e2, GetBulletPattern(0), { 10, 10 }, { 0, 0 });
 
     CHECK(EntityHasFlag(e, FLAG_PLAYER), "Player has entity flag");
     CHECK(EntityHasFlag(e2, FLAG_BULLET), "Bullet has bullet flag");
@@ -96,7 +96,7 @@ END;
 
 BULLET void UnitTestBullet()
 {
-    SDL_LogInfo(0, "Doing unit tests of bulletgame");
+    INFO("Doing unit tests of bulletgame");
     TestTransformations();
     TestEntityFlags();
 }
